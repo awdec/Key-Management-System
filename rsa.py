@@ -38,7 +38,7 @@ class RSA:
         x, _ = self.exgcd(a, mod)
         return (x % mod + mod) % mod
 
-    def encode(self, s):
+    def encrypt(self, s):
         t = []
         for c in s:
             now = ord(c)
@@ -46,7 +46,7 @@ class RSA:
             t.append(str(cur))
         return ','.join(t)
 
-    def decode(self, s):
+    def decrypt(self, s):
         a = list(map(int, s.split(',')))
         t = ''
         for now in a:
