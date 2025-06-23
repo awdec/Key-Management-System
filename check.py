@@ -6,27 +6,17 @@ def check_rsa_safety(rsa):
     n = rsa.p * rsa.q
     key_size = n.bit_length()
     e = rsa.e
-    print(f"🔑 密钥长度: {key_size} bits")
-    print(f"🧮 公钥指数 e: {e}")
-
     issues = []
-
     if key_size < 1024:
         issues.append("❌ 密钥太短，完全不安全（<1024 位）")
     elif key_size < 2048:
         issues.append("⚠️ 密钥较短，已不推荐使用（建议 ≥2048 位）")
-    else:
-        print("✅ 密钥长度符合当前安全建议")
     if e != 65537:
         issues.append(f"⚠️ 公钥指数为 {e}，建议使用 65537（安全高效）")
-    else:
-        print("✅ 公钥指数 e 设置良好")
     if issues:
-        print("\n📋 风险检测结果:")
-        for issue in issues:
-            print("  -", issue)
+        return False, issues
     else:
-        print("🎉 没有发现风险，密钥设置合理")
+        return True, "🎉 没有发现风险，密钥设置合理"
 
 
 # 示例弱密钥列表（可扩展）

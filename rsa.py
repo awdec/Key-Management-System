@@ -1,14 +1,19 @@
 from sympy import randprime
 
 
-class RSA:
+class RSAcode:
     def __init__(self, p=None, q=None):
         # 默认使用给定的两个大素数
         self.p = p if p else int(1e9 + 7)
         self.q = q if q else 998244353
         self.M = self.p * self.q
         self.phi = (self.p - 1) * (self.q - 1)
-        self.e = self.phi - 1  # e 选为 phi - 1
+        # self.e = self.phi - 1  # e 选为 phi - 1
+        self.e = 65537
+        self.d = self.inv(self.e, self.phi)
+
+    def reload(self, newe):
+        self.e = newe
         self.d = self.inv(self.e, self.phi)
 
     def generate_large_prime(self, bits=512):

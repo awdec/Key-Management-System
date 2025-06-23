@@ -1,4 +1,4 @@
-class AES:
+class AEScode:
     """AES-128 加密算法实现（ECB模式）"""
 
     # 完整 S-盒（字节替换表）
@@ -219,16 +219,30 @@ class AES:
         return bytes(state)
 
 
+def encode(plaintext):
+    key = bytes.fromhex("2b7e151628aed2a6abf7158809cf4f3c")
+    aes = AEScode(key)
+    return aes.encrypt(plaintext).hex()
+    # print(f"明文: {plaintext}")
+    # print(f"密文: {ciphertext.hex()}")
+    # print(f"解密: {aes.decrypt(ciphertext).decode()}")
+
+
+def decode(ciphertext):
+    key = bytes.fromhex("2b7e151628aed2a6abf7158809cf4f3c")
+    aes = AEScode(key)
+    return aes.decrypt(ciphertext).decode()
+
+
 # 示例用法
 if __name__ == "__main__":
-    # 测试向量（AES-128标准测试向量）
     key = bytes.fromhex("2b7e151628aed2a6abf7158809cf4f3c")
     # key = bytes.fromhex("12345678901234567890123456789012")
 
     # plain = bytes.fromhex("3243f6a8885a308d313198a2e0370734")
 
     # 初始化AES实例
-    aes = AES(key)
+    aes = AEScode(key)
 
     # 加密测试
     # cipher = aes.encrypt(plain)
