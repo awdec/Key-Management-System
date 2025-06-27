@@ -1,12 +1,11 @@
-from datetime import datetime
-
-from RSA import RSAcode
-from AES import AEScode
-import check
 import hashlib
-import AES
 import json
 import os
+from datetime import datetime
+
+import AES
+import check
+from RSA import RSAcode
 
 
 def saveASE(data):
@@ -79,15 +78,22 @@ def log_in():
 
 
 def create_aes():
+    print("您希望：A.自定义密钥 B.系统生成")
+    option = input()
     flag = 0
     while not flag:
-        print("您创建的 AES 密钥：")
-        key = input()
-        print(AES.encode(key))
-        key = AES.encode(key)
+        key = ''
+        if option == 'A':
+            print("您创建的 AES 密钥：")
+            key = input()
+        else:
+            key = AES.generate_strong_aes_key()
+            print("系统生成的 AES 密钥: ", key)
         info = check.is_secure_aes_key(key)
         print(info[1])
         flag = info[0]
+        print(AES.encode(key))
+        key = AES.encode(key)
 
     sha256_hash = hashlib.sha256(key.encode()).hexdigest()
 
@@ -98,10 +104,7 @@ def create_aes():
     q = int(input())
     a = RSAcode(p, q)
 
-    # a = RSAcode(1610612741, 1061067769)
-    # a.reload(65537)
-
-    now = a.decrypt(sha256_hash)
+    now = a.encrypt_by_d(sha256_hash)
     data = {
         "username": username,
         "key": key,
@@ -120,7 +123,7 @@ def view_aes():
     a.M = n
     for c in its:
         now = AES.decode(c['key'])
-        cur = a.encrypt(c['signature'])
+        cur = a.decrypt_by_e(c['signature'])
         tag = hashlib.sha256(c['key'].encode()).hexdigest()
         if tag == cur:
             print('验证正确')
@@ -130,17 +133,31 @@ def view_aes():
 
 
 def create_rsa():
+    print("您希望：A.自定义密钥 B.系统生成")
+    option = input()
     flag = 0
     while not flag:
-        print("您创建的 RSA 密钥：")
-        print("p: ", end="")
-        p = int(input())
-        print("q: ", end="")
-        q = int(input())
-        print("您创建的 RSA 公钥：")
-        print("e: ", end="")
-        e = int(input())
-
+        p, q, e = 0, 0, 0
+        if option == 'A':
+            print("您创建的 RSA 密钥：")
+            print("p: ", end="")
+            p = int(input())
+            print("q: ", end="")
+            q = int(input())
+            print("您创建的 RSA 公钥：")
+            print("e: ", end="")
+            e = int(input())
+        else:
+            print('系统生成的 RSA 密钥：')
+            tmp = RSAcode()
+            tmp.rand()
+            print("p: ", end="")
+            print(tmp.p)
+            print("q: ", end="")
+            print(tmp.q)
+            print("系统生成的 RSA 公钥：")
+            print("e: ", end="")
+            print(tmp.e)
         a = RSAcode(p, q)
         a.reload(e)
         info = check.check_rsa_safety(a)
@@ -163,8 +180,8 @@ def create_rsa():
     # a = RSAcode(1610612741, 1061067769)
     # a.reload(65537)
 
-    now = a.decrypt(sha256_hashp)
-    cur = a.decrypt(sha256_hashq)
+    now = a.encrypt_by_d(sha256_hashp)
+    cur = a.encrypt_by_d(sha256_hashq)
     data = {
         "username": username,
         "p": dp,
@@ -185,8 +202,8 @@ def view_rsa():
     a = RSAcode()
     a.M = n
     for c in its:
-        now = a.encrypt(c['signaturep'])
-        cur = a.encrypt(c['signatureq'])
+        now = a.decrypt_by_e(c['signaturep'])
+        cur = a.encrypt_by_e(c['signatureq'])
         tag1 = hashlib.sha256(c['p'].encode()).hexdigest()
         tag2 = hashlib.sha256(c['q'].encode()).hexdigest()
         if tag1 == now and tag2 == cur:

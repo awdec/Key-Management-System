@@ -29,7 +29,7 @@ class RSAcode:
             self.q = self.generate_large_prime(bits)
         self.M = self.p * self.q
         self.phi = (self.p - 1) * (self.q - 1)
-        self.e = self.phi - 1  # e 选为 phi - 1
+        self.e = 65537  # e 选为 phi - 1
         self.d = self.inv(self.e, self.phi)
 
     def exgcd(self, a, b):
@@ -43,7 +43,23 @@ class RSAcode:
         x, _ = self.exgcd(a, mod)
         return (x % mod + mod) % mod
 
-    def encrypt(self, s):
+    def encrypt_by_d(self, s):
+        t = []
+        for c in s:
+            now = ord(c)
+            cur = pow(now, self.d, self.M)
+            t.append(str(cur))
+        return ','.join(t)
+
+    def decrypt_by_e(self, s):
+        a = list(map(int, s.split(',')))
+        t = ''
+        for now in a:
+            cur = pow(now, self.e, self.M)
+            t += chr(cur)
+        return t
+
+    def encrypt_by_e(self, s):
         t = []
         for c in s:
             now = ord(c)
@@ -51,7 +67,7 @@ class RSAcode:
             t.append(str(cur))
         return ','.join(t)
 
-    def decrypt(self, s):
+    def decrypt_by_d(self, s):
         a = list(map(int, s.split(',')))
         t = ''
         for now in a:

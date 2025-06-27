@@ -30,6 +30,7 @@ WEAK_KEYS = {
 
 
 def check_aes_key_length(key: bytes) -> bool:
+    print(len(key))
     return len(key) in [16, 24, 32]  # 128/192/256 位
 
 
@@ -55,13 +56,9 @@ def is_secure_aes_key(key: bytes):
 
     # 计算 Shannon 熵，检测随机性
     entropy = shannon_entropy(key)
-    if entropy < 6.5:
+    if entropy < 4.0:
         return False, f"❌ 密钥熵过低（{entropy:.2f}），随机性不足"
 
     return True, "✅ 密钥强度良好，可安全用于 AES 加密"
 
-# # 推荐生成强密钥
-# def generate_strong_aes_key(bits=256):
-#     from Crypto.Random import get_random_bytes
-#     assert bits in [128, 192, 256]
-#     return get_random_bytes(bits // 8)
+

@@ -234,6 +234,12 @@ def decode(ciphertext):
     return aes.decrypt(ciphertext).decode()
 
 
+# # 推荐生成强密钥
+def generate_strong_aes_key(bits=256):
+    from Crypto.Random import get_random_bytes
+    assert bits in [128, 192, 256]
+    return get_random_bytes(bits // 8)
+
 # 示例用法
 if __name__ == "__main__":
     key = bytes.fromhex("2b7e151628aed2a6abf7158809cf4f3c")
