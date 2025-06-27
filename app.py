@@ -164,8 +164,8 @@ def create_rsa():
         print(info[1])
         flag = info[0]
 
-    dp = AES.encode(p)
-    dq = AES.encode(q)
+    dp = AES.encode(str(p))
+    dq = AES.encode(str(q))
 
     sha256_hashp = hashlib.sha256(dp.encode()).hexdigest()
     sha256_hashq = hashlib.sha256(dq.encode()).hexdigest()
@@ -186,7 +186,7 @@ def create_rsa():
         "username": username,
         "p": dp,
         "q": dq,
-        "e": e,
+        "e": str(e),
         "signaturep": now,
         "signatureq": cur
     }
@@ -203,13 +203,15 @@ def view_rsa():
     a.M = n
     for c in its:
         now = a.decrypt_by_e(c['signaturep'])
-        cur = a.encrypt_by_e(c['signatureq'])
+        cur = a.decrypt_by_e(c['signatureq'])
         tag1 = hashlib.sha256(c['p'].encode()).hexdigest()
         tag2 = hashlib.sha256(c['q'].encode()).hexdigest()
+        print(tag1, now)
+        print(tag2, cur)
         if tag1 == now and tag2 == cur:
             print('验证正确')
-            print('密钥是：p = ', c['p'], end=", ")
-            print("q = ", c['q'], end=", ")
+            print('密钥是：p = ', AES.decode(c['p']), end=", ")
+            print("q = ", AES.decode(c['q']), end=", ")
             print('e = ', c['e'])
         else:
             print('验证错误，信息被篡改！')

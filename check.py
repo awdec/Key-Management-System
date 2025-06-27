@@ -7,9 +7,9 @@ def check_rsa_safety(rsa):
     key_size = n.bit_length()
     e = rsa.e
     issues = []
-    if key_size < 1024:
+    if key_size < 16:
         issues.append("❌ 密钥太短，完全不安全（<1024 位）")
-    elif key_size < 2048:
+    elif key_size < 32:
         issues.append("⚠️ 密钥较短，已不推荐使用（建议 ≥2048 位）")
     if e != 65537:
         issues.append(f"⚠️ 公钥指数为 {e}，建议使用 65537（安全高效）")
